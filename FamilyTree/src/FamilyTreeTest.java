@@ -4,22 +4,25 @@ public static void main (String [] args){
 	FamilyTree familyTree=new FamilyTree(name);
 	int option;
 	do{
-		System.out.println("1: Add child to current");
-		System.out.println("2: Input Partner");
+		System.out.println("1: Add child");
+		System.out.println("2: Add partner");
 		System.out.println("3: Display Family Tree");
+		System.out.println("4: Display Family Member");
 		System.out.println("0: Quit");
 		option=Input.getInteger("Input Option: ");
+				
 		switch(option){
 		case 1: 
-			name=Input.getString("Input Childs Name: ");
-			familyTree.addchild(name);			
+			familyTree.addChild();			
 			break;
 		case 2:		
-			name=Input.getString("Input Partners Name: ");
-			//familyTree.addPartner(name);			
+			familyTree.addPartner();			
 			break;
 		case 3: 
 			familyTree.displayFamilyTree();			
+			break;
+		case 4: 
+			familyTree.displayFamilyMember();			
 			break;
 		}
 	}while(option!=0);
