@@ -1,0 +1,190 @@
+public class FamilyTree {
+
+	int identifier;
+
+	public class FamilyTreeNode {
+		String name;
+		FamilyTreeNode partner;
+		FamilyTreeNode sibling;
+		FamilyTreeNode child;
+		int id;
+
+		public String toString() {
+			String retVal = "";
+			retVal += name + " (ID " + id + ")";
+
+			if (this.partner != null) {
+				retVal += " is married to " + this.partner.name + " (ID "
+						+ this.partner.id + ")";
+			} else {
+				retVal += " has no partner.";
+			}
+
+			return retVal;
+		}
+	}
+
+	FamilyTreeNode ancestor;
+
+	public int getIdentifier() {
+		int retval = identifier;
+		identifier++;
+		return retval;
+	}
+
+	public FamilyTree(String name) {
+		ancestor = new FamilyTreeNode();
+		ancestor.name = name;
+		ancestor.id = getIdentifier();
+
+	}
+
+	private FamilyTreeNode getNode(int identifier) {
+		FamilyTreeNode current = ancestor;
+
+		while (current != null) {
+			if (current.id == identifier) {
+				return current;
+			}
+
+			if (current.partner != null) {
+				if (current.partner.id == identifier) {
+					return (current.partner);
+				}
+			}
+
+			if (current.sibling != null) {
+				current = current.sibling;
+			}
+
+			if (current.child != null) {
+				current = current.child;
+			}
+
+		}
+		System.out.println("No Matches");
+		return null;
+	}
+
+	public void addPartner() {
+		displayFamilyTree();
+		Integer option = Input
+				.getInteger("Which ID would you like to add a partner to?: ");
+
+		if (option != null) {
+			if (getNode(option).partner == null) {
+				String name = Input.getString("Input Partner Name: ");
+				getNode(option).partner = new FamilyTreeNode();
+				getNode(option).partner.id = getIdentifier();
+				getNode(option).partner.name = name;
+				getNode(option).partner.partner = getNode(option);
+			} else {
+				System.out.println("Error: partner already exists.");
+			}
+		} else {
+
+			System.out.println("Invalid option");
+
+		}
+	}
+
+	public void addChild() {
+		displayFamilyTree();
+		Integer position = Input
+				.getInteger("Where would you like the child to be added?");
+
+		if (position != null) {
+			if (getNode(position) != null) {
+				FamilyTreeNode current = getNode(position);
+				if (current.partner != null) {
+					FamilyTreeNode newChild = new FamilyTreeNode();
+					newChild.name = Input.getString("Please enter a name: ");
+
+					if (current.child == null) {
+						current.child = newChild;
+						current.child.id = getIdentifier();
+
+						current.partner.child = current.child;
+					} else {
+						FamilyTreeNode next = current.child;
+						while (next.sibling != null) {
+							next = next.sibling;
+						}
+						next.sibling = newChild;
+						next.sibling.id = getIdentifier();
+					}
+				} else {
+					System.out.println("No Partner");
+				}
+			} else {
+				System.out.println("Invalid Family Member");
+			}
+		} else {
+			System.out.println("Invalid Position");
+		}
+	}
+
+	private void recursivePrintFamilyTree(int level, FamilyTreeNode node) {
+		displayNode(level, node);
+
+		FamilyTreeNode sibling = node.sibling;
+		while (sibling != null) {
+			if ((node.partner == null) && (node.child == null)) {
+				String indent = "";
+				for (int i = 0; i < level + 1; i++) {
+					indent += "\t";
+				}
+				System.out.println(indent + "no children");
+			}
+			if ((node.partner != null) && (node.child == null)) {
+				String indent = "";
+				for (int i = 0; i < level + 1; i++) {
+					indent += "\t";
+				}
+				System.out.println(indent + "no children");
+			}
+
+			displayNode(level, sibling);
+			sibling = sibling.sibling;
+		}
+
+		if (node.partner == null) {
+			String indent = "";
+			for (int i = 0; i < level + 1; i++) {
+				indent += "\t";
+			}
+			System.out.println(indent + "no children");
+		}
+
+		else if (node.child == null) {
+			String indent = "";
+			for (int i = 0; i < level + 1; i++) {
+				indent += "\t";
+			}
+			System.out.println(indent + "no children");
+		}
+		if (node.child != null) {
+			int newLevel = level + 1;
+			recursivePrintFamilyTree(newLevel, node.child);
+		}
+	}
+
+	public void displayFamilyTree() {
+		recursivePrintFamilyTree(0, ancestor);
+	}
+
+	public void displayFamilyMember() {
+		Integer position = Input
+				.getInteger("Which family member would you like to display?: ");
+		recursivePrintFamilyTree(0, getNode(position));
+	}
+
+	public void displayNode(int indent, FamilyTreeNode node) {
+		String indentation = "";
+		for (int i = 0; i < indent; i++) {
+			indentation += "\t";
+		}
+
+		System.out.println(indentation + node);
+	}
+}
